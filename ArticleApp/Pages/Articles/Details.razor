@@ -1,8 +1,21 @@
 ﻿@page  "/Articles/Details/{Id:int}"
 
+@inject NavigationManager NavigationManager
+@inject IArticleRepository ArticleRepository
+
 <h3>Details</h3>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
+    public Article Model { get; set; } = new Article();
+
+    protected async Task btnSubmit_Click()
+    {
+        // 저장 로직
+        await ArticleRepository.AddArticleAsync(Model);
+        // 리스트 페이지로 이동
+        NavigationManager.NavigateTo("/Articles");
+    }
 }
