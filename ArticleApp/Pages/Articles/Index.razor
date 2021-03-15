@@ -2,8 +2,56 @@
 @page "/Articles/Index"
 
 
+@using ArticleApp.Models
+@inject IArticleRepository ArticleRepository
+
+
+
 <h3>Index</h3>
 
-@code {
+<div>
+    <a href="/Articles/Create" class="btn btn-primary">Create</a>
+</div>
 
+@if (articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>&nbsp;</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in articles)
+            {
+                <tr>
+                    <td>@article.Id</td>
+                    <td>@article.Title</td>
+                    <td>@article.Created.ToShortTimeString()</td>
+                    <td>
+                        <a href="/Articles/Details/@article.Id" class="btn btn-light">Details</a>
+                        <a href="/Articles/Edit/@article.Id" class="btn btn-light">Edit</a>
+                        <a href="/Articles/Delete/@article.Id" class="btn btn-light">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Article> articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        articles = await ArticleRepository.GetArticlesAsync();
+    }
 }
