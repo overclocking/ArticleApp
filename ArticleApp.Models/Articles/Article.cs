@@ -16,7 +16,7 @@ namespace ArticleApp.Models
         /// <summary>
         /// 제목, 빈값 불가, 255자 한정
         /// </summary>
-        [Required, MaxLength(255)]
+        [Required(ErrorMessage = "[ ! ] 제목을 입력하세요!"), MaxLength(255)]
         public string Title { get; set; }
 
     }
