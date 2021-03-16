@@ -19,5 +19,7 @@ namespace ArticleApp.Models
         [Required(ErrorMessage = "[ ! ] 제목을 입력하세요!"), MaxLength(255)]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "[ ! ] 내용을 입력하세요!")]
+        public string Content { get; set; }
     }
 }
