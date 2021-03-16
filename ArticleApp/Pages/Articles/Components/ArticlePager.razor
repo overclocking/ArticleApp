@@ -1,5 +1,31 @@
-﻿<h3>ArticlePager</h3>
+﻿@using Dul.Web
+
+<h3>ArticlePager</h3>
 
 @code {
+    // 부모로 부터 모든 페이저 관련된 정보가 담긴 PagerBase 개체 받음
+    [Parameter]
+    public PagerBase Model { get; set; }
 
+    // Parameter가 넘어오면 자동으로 Pager,PageCount 계산
+    protected override Task OnParametersSetAsync()
+    {
+        Model.PageCount = Convert.ToInt32(Math.Ceiling(Model.RecordCount / (double)Model.PageSize));
+
+        return base.OnParametersSetAsync();
+    }
+
+    // 부모의 콜백 메서드를 PageIndexChaged 대리자로 받음
+    [Parameter]
+    public EventCallback<int> PageIndexChanged { get; set; }
+
+    // Pager 버튼 클릭할 때 현재 클릭한 페이지 번호를 받아서 부모에게 전달
+    private void PageButtonClicked(int pageNumber)
+    {
+        Model.PageNumber = pageNumber;
+        Model.PageIndex = pageNumber - 1;
+
+        // PageIndex를 부모 창으로 전송
+        PageIndexChanged.InvokeAsync(pageNumber - 1);
+    }
 }
