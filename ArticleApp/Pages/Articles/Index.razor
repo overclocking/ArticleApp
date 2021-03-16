@@ -15,6 +15,17 @@
 
 <div>
     <a href="/Articles/Create" class="btn btn-primary">Create</a>
+    <AuthorizeView>
+        <Authorized>
+
+        </Authorized>
+        <NotAuthorized>
+            <a href="/Articles/Manage" class="btn btn-primary">Manage</a> 
+        </NotAuthorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Administrators, Managers">
+        <a href="/Articles/Manage" class="btn btn-primary">Manage</a>
+    </AuthorizeView>
 </div>
 
 @if (articles == null)

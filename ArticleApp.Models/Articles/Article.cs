@@ -18,8 +18,16 @@ namespace ArticleApp.Models
         /// </summary>
         [Required(ErrorMessage = "[ ! ] 제목을 입력하세요!"), MaxLength(255)]
         public string Title { get; set; }
-
+        
+        /// <summary>
+        /// 내용
+        /// </summary>
         [Required(ErrorMessage = "[ ! ] 내용을 입력하세요!")]
         public string Content { get; set; }
+
+        /// <summary>
+        /// 공지
+        /// </summary>
+        public bool IsPinned { get; set; } = false;
     }
 }
