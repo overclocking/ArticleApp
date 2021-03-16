@@ -51,7 +51,7 @@ else
     </table>
 }
 
-<ArticlePager Model="pager"></ArticlePager>
+<ArticlePager Model="pager" PageIndexChanged="PageIndexChaged"></ArticlePager>
 
 @code {
     // 페이져 기본값 설정
@@ -60,13 +60,19 @@ else
         PageNumber = 1,
         PageIndex = 0,
         PageSize = 2,
-        PagerButtonCount = 5
+        PagerButtonCount = 3
     };
 
     private List<Article> articles;
 
     protected override async Task OnInitializedAsync()
-    {   //[1] 전체 데이터 모두 출력
+    {
+        await DisplayData();
+    }
+
+    private async Task DisplayData()
+    {
+        //[1] 전체 데이터 모두 출력
         //articles = await ArticleRepository.GetArticlesAsync();
 
         //[2] 페이징 처리된 데이터만 출력
@@ -75,15 +81,14 @@ else
         articles = pagingData.Records.ToList(); // 페이징 처리된 레코드
     }
 
+
     // Pager 버튼 클릭 콜백 메서드
     private async void PageIndexChaged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
 
-        var pagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
-        pager.RecordCount = pagingData.TotalRecords; // 총 레코드 수
-        articles = pagingData.Records.ToList(); // 페이징 처리된 레코드
+        await DisplayData();
 
         StateHasChanged(); // 현재 컴포넌트 재로드
     }
