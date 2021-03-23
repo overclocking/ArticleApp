@@ -31,6 +31,7 @@ else
                 <th>&nbsp;</th>
                 <th>IsPinned</th>
                 <th>&nbsp;</th>
+                <th>Delete</th>
 
 
             </tr>
@@ -51,6 +52,9 @@ else
                 <td>
                     <Input type="button" value="공지글로 올리기" class="btn btn-light" @onclick="@(() => PinnedBy(article))" />
                 </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" data-toggle="modal" data-target="#articleDeleteDialog" @onclick="(() => DeleteBy(article))"/>
+                </td>
             </tr>
             }
         </tbody>
@@ -58,6 +62,8 @@ else
 }
 
 <ArticlePager Model="pager" PageIndexChanged="PageIndexChaged"></ArticlePager>
+
+<ArticleDeleteDialog OnClick="btnDelete_Click"></ArticleDeleteDialog>
 
 @if (isShow)
 {
@@ -85,6 +91,25 @@ else
 
 
 @code {
+
+    private async void btnDelete_Click()
+    {
+        await ArticleRepository.DeleteArticleAsync(_article.Id);    //삭제
+        await JSRuntime.InvokeAsync<object>("closeModal", "articleDeleteDialog");   // _Host.cshtml
+        _article = new Article();   // 선택 항목 초기화
+
+        var pagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        articles = pagingData.Records.ToList();
+
+        StateHasChanged();
+    }
+
+    private void DeleteBy(Article article)
+    {
+        _article = article;
+    }
+
 
     /* Notice Modal */
     private Article _article = new Article(); // 선택한 항목 관리
