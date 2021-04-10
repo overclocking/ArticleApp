@@ -12,8 +12,8 @@
 <h3>Manage</h3>
 
 <div>
-    <a href="/Articles/Create" class="btn btn-primary">Create</a>
-
+    <a href="/Articles/Create" class="btn btn-primary">Create(Page)</a>
+    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal" data-target="#articleEditDialog" @onclick="btnCreate_Click" />
 </div>
 
 @if (articles == null)
@@ -31,6 +31,7 @@ else
                 <th>&nbsp;</th>
                 <th>IsPinned</th>
                 <th>&nbsp;</th>
+                <th>Edit</th>
                 <th>Delete</th>
 
 
@@ -53,7 +54,10 @@ else
                     <Input type="button" value="공지글로 올리기" class="btn btn-light" @onclick="@(() => PinnedBy(article))" />
                 </td>
                 <td>
-                    <input type="button" value="Delete" class="btn btn-danger" data-toggle="modal" data-target="#articleDeleteDialog" @onclick="(() => DeleteBy(article))"/>
+                    <input type="button" value="Edit" class="btn btn-danger" data-toggle="modal" data-target="#articleEditDialog" @onclick="(() => EditBy(article))" />
+                </td>
+                <td>
+                    <input type="button" value="Delete" class="btn btn-danger" data-toggle="modal" data-target="#articleDeleteDialog" @onclick="(() => DeleteBy(article))" />
                 </td>
             </tr>
             }
@@ -64,6 +68,11 @@ else
 <ArticlePager Model="pager" PageIndexChanged="PageIndexChaged"></ArticlePager>
 
 <ArticleDeleteDialog OnClick="btnDelete_Click"></ArticleDeleteDialog>
+
+<ArticleEditorForm Model="@_article" SaveOrUpdated="SaveOrUpdated">
+    <EditorFormTitle>@editorFormTitle</EditorFormTitle>
+</ArticleEditorForm>
+
 
 @if (isShow)
 {
@@ -91,6 +100,35 @@ else
 
 
 @code {
+
+    private void btnCreate_Click()
+    {
+        editorFormTitle = "글쓰기";
+        _article = new Article(); // 모델 클리어
+    }
+
+    private string editorFormTitle = "";
+
+    private void EditBy(Article article)
+    {
+        editorFormTitle = "수정하기";
+        _article = article;
+    }
+
+    /// <summary>
+    /// 저장 또는 수정 후 데이터 다시 읽어오기
+    /// </summary>
+    private async void SaveOrUpdated()
+    {
+
+
+        var pagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        articles = pagingData.Records.ToList();
+
+        StateHasChanged();
+    }
+
 
     private async void btnDelete_Click()
     {
